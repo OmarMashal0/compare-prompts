@@ -7,6 +7,8 @@
 
 **Compare LLM prompts side by side. No config files. No dashboards. No signup.**
 
+📦 **[View on PyPI](https://pypi.org/project/compare-prompts/)** | 🐙 **[View on GitHub](https://github.com/OmarMashal0/compare-prompts)**
+
 ```bash
 pip install compare-prompts
 ```
