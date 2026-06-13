@@ -14,6 +14,7 @@ Usage:
     )
 """
 
+from typing import Union
 from dotenv import load_dotenv
 from compare_prompts.runner import run_all
 from compare_prompts.display import print_table
@@ -24,7 +25,7 @@ __version__ = "0.1.0"
 
 
 def compare(
-    prompts: dict | list,
+    prompts: Union[dict, list],
     inputs: list,
     model: str = "gpt-4o-mini",
     show_outputs: bool = False,
