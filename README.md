@@ -1,6 +1,6 @@
 # promptdiff
 
-[![PyPI version](https://badge.fury.io/py/promptdiff.svg)](https://pypi.org/project/promptdiff/)
+[![PyPI version](https://badge.fury.io/py/prompt-diff.svg)](https://pypi.org/project/prompt-diff/)
 [![CI](https://github.com/OmarMashal0/promptdiff/actions/workflows/ci.yml/badge.svg)](https://github.com/OmarMashal0/promptdiff/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
@@ -8,7 +8,7 @@
 **Compare LLM prompts side by side. No config files. No dashboards. No signup.**
 
 ```bash
-pip install promptdiff
+pip install prompt-diff
 ```
 
 ---
@@ -29,7 +29,7 @@ You have two (or more) prompts. You changed one word. Did it actually change any
 ### Step 1 — Install
 
 ```bash
-pip install promptdiff
+pip install prompt-diff
 ```
 
 ### Step 2 — Generate a starter file (optional)
