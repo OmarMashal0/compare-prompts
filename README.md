@@ -1,0 +1,228 @@
+# promptdiff
+
+[![PyPI version](https://badge.fury.io/py/promptdiff.svg)](https://pypi.org/project/promptdiff/)
+[![CI](https://github.com/OmarMashal0/promptdiff/actions/workflows/ci.yml/badge.svg)](https://github.com/OmarMashal0/promptdiff/actions)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
+
+**Compare LLM prompts side by side. No config files. No dashboards. No signup.**
+
+```bash
+pip install promptdiff
+```
+
+---
+
+## The problem
+
+You have two (or more) prompts. You changed one word. Did it actually change anything? Right now:
+- Running them manually and eyeballing outputs takes 30 minutes
+- Setting up promptfoo requires YAML config and predefined "correct" answers
+- Platforms like Braintrust/LangSmith require signup and send data to a dashboard
+
+**promptdiff is the missing middle ground** — run it in your script, get a table in your terminal.
+
+---
+
+## Quickstart
+
+### Step 1 — Install
+
+```bash
+pip install promptdiff
+```
+
+### Step 2 — Generate a starter file (optional)
+
+```bash
+promptdiff init
+```
+
+This creates a `test_prompts.py` file you can edit immediately.
+
+### Step 3 — Or write your own comparison
+
+```python
+from promptdiff import compare
+
+compare(
+    prompts={
+        "original": "You are a helpful assistant.",
+        "concise":  "You are a concise helpful assistant.",
+    },
+    inputs=[
+        "Explain what a database is.",
+        "What is recursion?",
+        "Write a short poem about coding.",
+    ],
+    model="gpt-4o-mini"
+)
+```
+
+### Step 4 — Run it
+
+```bash
+python test_prompts.py
+```
+
+### Step 5 — See results
+
+```
+Running 2 prompts x 3 inputs = 6 calls...  done
+
+                   Prompt Comparison Results
+ ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  avg length (tokens)    187                  61  (-67%)
+  tone                   warm                 neutral
+  uses lists             67%                  33%
+  uses headers           33%                  0%
+  avg cost (USD)         $0.0021              $0.0009
+  refusal rate           0%                   0%
+  reading level          high school          middle school
+```
+
+---
+
+## Where to put this in your project
+
+```
+your-project/                <- your existing project
+├── main.py                  <- don't touch this
+├── prompts.py               <- don't touch this
+├── .env                     <- don't touch this (already has your API key)
+└── test_prompts.py          <- create this one new file
+```
+
+Import your prompts directly from your existing code:
+
+```python
+from promptdiff import compare
+from prompts import PROMPT_V1, PROMPT_V2
+
+compare(
+    prompts={"v1": PROMPT_V1, "v2": PROMPT_V2},
+    inputs=["your test questions here"],
+    model="gpt-4o-mini"
+)
+```
+
+---
+
+## Setup your API key
+
+Create a `.env` file in your project root (or use an existing one):
+
+```bash
+# Only one key is needed — whichever provider you use
+OPENAI_API_KEY=sk-...
+```
+
+promptdiff automatically reads `.env` files. No extra configuration.
+
+### Get an API key
+
+| Provider | Link | Env variable | Free tier? |
+|---|---|---|---|
+| OpenAI | [platform.openai.com/api-keys](https://platform.openai.com/api-keys) | `OPENAI_API_KEY` | No |
+| Anthropic | [console.anthropic.com](https://console.anthropic.com/settings/keys) | `ANTHROPIC_API_KEY` | No |
+| Google Gemini | [aistudio.google.com/apikey](https://aistudio.google.com/apikey) | `GEMINI_API_KEY` | Yes |
+| Groq | [console.groq.com/keys](https://console.groq.com/keys) | `GROQ_API_KEY` | Yes |
+| Ollama | [ollama.com](https://ollama.com) | None needed | Yes (local) |
+
+---
+
+## Supported models
+
+Any model supported by [LiteLLM](https://litellm.ai) works (2,600+ models):
+
+```python
+compare(..., model="gpt-4o-mini")                      # OpenAI
+compare(..., model="gpt-4o")                            # OpenAI
+compare(..., model="claude-haiku-4-5")                  # Anthropic
+compare(..., model="claude-sonnet-4-6")                 # Anthropic
+compare(..., model="gemini/gemini-2.0-flash")           # Google Gemini
+compare(..., model="groq/llama-3.3-70b-versatile")      # Groq (free)
+compare(..., model="ollama/llama3")                     # Ollama (local, free)
+compare(..., model="deepseek/deepseek-chat")            # DeepSeek
+```
+
+Full list of all supported models: [models.litellm.ai](https://models.litellm.ai)
+
+---
+
+## Compare more than 2 prompts
+
+```python
+compare(
+    prompts={
+        "baseline": "You are a helpful assistant.",
+        "concise":  "You are a concise helpful assistant.",
+        "formal":   "You are a professional formal assistant.",
+        "friendly": "You are a warm friendly assistant.",
+    },
+    inputs=["your test questions"]
+)
+```
+
+Each prompt becomes a column. Same table, more columns.
+
+---
+
+## See raw outputs
+
+```python
+compare(
+    prompts={...},
+    inputs=[...],
+    show_outputs=True
+)
+```
+
+Prints each raw LLM response below the table, grouped by input.
+
+---
+
+## Faster execution with async
+
+For many prompt+input combinations, run calls concurrently:
+
+```python
+compare(
+    prompts={...},
+    inputs=[...],
+    use_async=True
+)
+```
+
+---
+
+## What it measures
+
+| Metric | Description |
+|---|---|
+| avg length (tokens) | Average response length in tokens |
+| tone | Detected tone: neutral, formal, warm, or technical |
+| uses lists | % of responses using bullet points or numbered lists |
+| uses headers | % of responses using markdown headers |
+| uses code blocks | % of responses using fenced code blocks |
+| avg cost (USD) | Estimated cost per response based on token usage |
+| refusal rate | % of responses that refused to answer |
+| reading level | elementary / middle school / high school / college |
+| avg sentence length | Average number of words per sentence |
+
+---
+
+## Why not promptfoo?
+
+promptfoo is excellent. Use it if you need CI/CD integration, red-teaming,
+or assertion-based testing with expected outputs.
+
+**promptdiff is for when you just want to run prompts right now** and see how they
+behave differently — no YAML, no config, no web server, no predefined "correct"
+answers. Just a table in your terminal.
+
+---
+
+## License
+
+MIT
