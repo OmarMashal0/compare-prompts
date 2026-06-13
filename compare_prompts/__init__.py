@@ -21,7 +21,7 @@ from compare_prompts.display import print_table
 
 load_dotenv()
 
-__version__ = "0.2.2"
+__version__ = "0.2.3"
 
 
 def compare(
