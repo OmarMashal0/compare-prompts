@@ -1,7 +1,3 @@
-# Plan files (private to developer)
-PROMPTDIFF_PLAN.md
-implementation_plan.md
-
 # Environment variables (contains API keys — NEVER commit this)
 .env
 

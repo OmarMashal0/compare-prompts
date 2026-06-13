@@ -1,0 +1,53 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "promptdiff"
+version = "0.1.0"
+description = "Compare LLM prompts side by side — no config, no dashboard, just a table"
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "MIT"}
+authors = [
+    {name = "Omar Mashal", email = "omarmashal@example.com"}
+]
+keywords = ["llm", "prompt", "comparison", "diff", "ai", "openai", "anthropic", "gemini", "evaluation"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Software Development :: Testing",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+    "litellm>=1.0.0",
+    "rich>=13.0.0",
+    "python-dotenv>=1.0.0",
+    "textstat>=0.7.0",
+    "click>=8.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-mock>=3.0.0",
+    "pytest-asyncio>=0.21.0",
+]
+
+[project.scripts]
+promptdiff = "promptdiff.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/OmarMashal0/promptdiff"
+Repository = "https://github.com/OmarMashal0/promptdiff"
+Issues = "https://github.com/OmarMashal0/promptdiff/issues"
+Documentation = "https://github.com/OmarMashal0/promptdiff#readme"
+Changelog = "https://github.com/OmarMashal0/promptdiff/blob/main/CHANGELOG.md"
