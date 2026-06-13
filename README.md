@@ -133,7 +133,7 @@ compare-prompts automatically reads `.env` files. No extra configuration.
 
 ## Supported models
 
-Any model supported by [LiteLLM](https://litellm.ai) works (2,600+ models):
+`compare-prompts` is extremely lightweight and natively supports the top 6 major AI providers with **zero external dependencies**:
 
 ```python
 compare(..., model="gpt-4o-mini")                      # OpenAI
@@ -146,7 +146,12 @@ compare(..., model="ollama/llama3")                     # Ollama (local, free)
 compare(..., model="deepseek/deepseek-chat")            # DeepSeek
 ```
 
-Full list of all supported models: [models.litellm.ai](https://models.litellm.ai)
+**Need an enterprise model?**
+We also optionally support 2,600+ additional models (Azure, AWS Bedrock, Vertex AI, OpenRouter, etc.) via LiteLLM as a fallback. To unlock them, just install the full package:
+```bash
+pip install "compare-prompts[all]"
+```
+Full list of all 2,600+ advanced models: [models.litellm.ai](https://models.litellm.ai)
 
 ---
 
