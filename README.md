@@ -37,7 +37,7 @@ pip install compare-prompts
 ### Step 2 — Generate a starter file (optional)
 
 ```bash
-compare-prompts init
+python -m compare_prompts init
 ```
 
 This creates a `test_prompts.py` file you can edit immediately.
@@ -237,7 +237,7 @@ answers. Just a table in your terminal.
 
 Here are some major features I plan to build into `compare-prompts` in the future:
 
-- **Interactive Wizard Mode:** A `compare-prompts wizard` CLI command that interactively asks for prompts and inputs in the terminal, eliminating the need to create a Python file.
+- **Interactive Wizard Mode:** A `python -m compare_prompts wizard` CLI command that interactively asks for prompts and inputs in the terminal, eliminating the need to create a Python file.
 - **Export to CSV / JSON:** Allowing `export="results.csv"` to save the terminal table data to a file.
 - **Custom Python Metrics:** Permitting developers to inject arbitrary scoring functions (e.g., `custom_metrics=[my_cohesion_scorer]`).
 - **Live Streaming Output:** Streaming LLM responses live to the terminal while waiting for the final aggregate table.
