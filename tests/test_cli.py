@@ -58,4 +58,4 @@ class TestInitCommand:
         runner = CliRunner()
         result = runner.invoke(main, ["--help"])
         assert result.exit_code == 0
-        assert "promptdiff" in result.output.lower()
+        assert "compare-prompts" in result.output.lower()

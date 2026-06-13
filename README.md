@@ -35,7 +35,7 @@ pip install compare-prompts
 ### Step 2 — Generate a starter file (optional)
 
 ```bash
-promptdiff init
+compare-prompts init
 ```
 
 This creates a `test_prompts.py` file you can edit immediately.
