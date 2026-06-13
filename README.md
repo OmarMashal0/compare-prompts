@@ -223,17 +223,18 @@ answers. Just a table in your terminal.
 
 ---
 
-## Contributing & Ideas
+## Future Work & Contributions
 
-**All contributions are wildly welcomed and appreciated!** 
+Here are some major features I plan to build into `compare-prompts` in the future:
 
-If you have a totally different idea for a metric, a new AI provider, or a UI tweak, PRs are always welcome. Some ideas that would be awesome to add:
-- A local cache so rerunning the exact same prompt doesn't hit the API twice.
-- A metric that measures the "cohesiveness" of an answer.
-- Exporting the terminal table to a CSV or JSON file.
-- Adding a `.gitignore` generator to the `init` command so beginners don't leak their `.env` files.
+- **Interactive Wizard Mode:** A `compare-prompts wizard` CLI command that interactively asks for prompts and inputs in the terminal, eliminating the need to create a Python file.
+- **Export to CSV / JSON:** Allowing `export="results.csv"` to save the terminal table data to a file.
+- **Custom Python Metrics:** Permitting developers to inject arbitrary scoring functions (e.g., `custom_metrics=[my_cohesion_scorer]`).
+- **Live Streaming Output:** Streaming LLM responses live to the terminal while waiting for the final aggregate table.
+- **Local Caching:** Adding a local cache so re-running the exact same prompt doesn't hit the API twice.
+- **CLI Safety Guards:** Adding a `.gitignore` generator to the `init` command so beginners don't leak their `.env` files.
 
-If you have your own idea that isn't on this list, it is also good and all good! Build it and open a PR.
+While I plan to implement these, **all contributions are wildly welcomed and appreciated!** If you want to tackle any of these items, or if you have a totally different idea for a metric, a new AI provider, or a UI tweak, PRs are always welcome. If you have your own idea that isn't on this list, that is also good and all good! Build it and open a PR.
 
 ⭐ **If you find this tool useful or like the idea, please don't forget to star the repository!** ⭐
 
