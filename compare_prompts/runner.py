@@ -1,124 +1,169 @@
 """
-LLM runner — calls LiteLLM for each prompt+input combination.
-
-Supports synchronous execution (default) and async execution
-for faster parallel runs when many combinations are needed.
+LLM runner — native, 0-dependency clients for major providers.
+Falls back to litellm for obscure providers if installed.
 """
 
 import asyncio
 import os
-import litellm
+import json
+import urllib.request
+import urllib.error
+from urllib.error import HTTPError
+
 from dotenv import load_dotenv
 
 load_dotenv()
 
-# Suppress LiteLLM's verbose debug logging
-litellm.suppress_debug_info = True
-os.environ.setdefault("LITELLM_LOG", "ERROR")
+
+def _native_openai_call(model, system_prompt, user_input, api_key, base_url="https://api.openai.com/v1/chat/completions"):
+    req = urllib.request.Request(base_url, headers={
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json"
+    }, data=json.dumps({
+        "model": model,
+        "messages": [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_input}
+        ]
+    }).encode("utf-8"))
+    
+    try:
+        with urllib.request.urlopen(req) as response:
+            data = json.loads(response.read().decode())
+            return {
+                "text": data["choices"][0]["message"]["content"],
+                "prompt_tokens": data.get("usage", {}).get("prompt_tokens", 0),
+                "completion_tokens": data.get("usage", {}).get("completion_tokens", 0),
+                "cost": 0.0
+            }
+    except HTTPError as e:
+        err = e.read().decode()
+        raise ValueError(f"\n❌ API Error: HTTP {e.code}\n{err}")
+
+
+def _native_anthropic_call(model, system_prompt, user_input, api_key):
+    req = urllib.request.Request("https://api.anthropic.com/v1/messages", headers={
+        "x-api-key": api_key,
+        "anthropic-version": "2023-06-01",
+        "Content-Type": "application/json"
+    }, data=json.dumps({
+        "model": model,
+        "system": system_prompt,
+        "messages": [{"role": "user", "content": user_input}],
+        "max_tokens": 4096
+    }).encode("utf-8"))
+    
+    try:
+        with urllib.request.urlopen(req) as response:
+            data = json.loads(response.read().decode())
+            return {
+                "text": data["content"][0]["text"],
+                "prompt_tokens": data.get("usage", {}).get("input_tokens", 0),
+                "completion_tokens": data.get("usage", {}).get("output_tokens", 0),
+                "cost": 0.0
+            }
+    except HTTPError as e:
+        err = e.read().decode()
+        raise ValueError(f"\n❌ Anthropic API Error: HTTP {e.code}\n{err}")
+
+
+def _native_gemini_call(model, system_prompt, user_input, api_key):
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
+    req = urllib.request.Request(url, headers={
+        "Content-Type": "application/json"
+    }, data=json.dumps({
+        "system_instruction": {"parts": [{"text": system_prompt}]},
+        "contents": [{"parts": [{"text": user_input}]}]
+    }).encode("utf-8"))
+    
+    try:
+        with urllib.request.urlopen(req) as response:
+            data = json.loads(response.read().decode())
+            text = data["candidates"][0]["content"]["parts"][0]["text"]
+            usage = data.get("usageMetadata", {})
+            return {
+                "text": text,
+                "prompt_tokens": usage.get("promptTokenCount", 0),
+                "completion_tokens": usage.get("candidatesTokenCount", 0),
+                "cost": 0.0
+            }
+    except HTTPError as e:
+        err = e.read().decode()
+        raise ValueError(f"\n❌ Gemini API Error: HTTP {e.code}\n{err}")
 
 
 def run_prompt(system_prompt: str, user_input: str, model: str) -> dict:
-    """
-    Run a single prompt+input combination through LiteLLM.
-    Returns the output text and token usage.
+    """Run a single prompt+input combination through native clients or litellm."""
+    provider = model.split("/")[0] if "/" in model else "openai"
+    model_name = model.split("/", 1)[1] if "/" in model else model
 
-    Raises a clear error if the API key is missing or the model name is wrong.
-    """
     try:
-        response = litellm.completion(
-            model=model,
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_input}
-            ]
-        )
-
-        output_text = response.choices[0].message.content or ""
-
-        # Token usage from LiteLLM response
-        prompt_tokens = response.usage.prompt_tokens
-        completion_tokens = response.usage.completion_tokens
-
-        # Cost calculation using LiteLLM's built-in cost function
-        try:
-            cost = litellm.completion_cost(completion_response=response)
-        except Exception:
-            cost = 0.0  # fallback if model pricing not available
-
-        return {
-            "text": output_text,
-            "prompt_tokens": prompt_tokens,
-            "completion_tokens": completion_tokens,
-            "cost": cost,
-        }
-
-    except litellm.AuthenticationError:
-        raise ValueError(
-            f"\n❌ API key missing or invalid for model '{model}'.\n"
-            f"   Make sure you have the right key in your .env file.\n"
-            f"   See .env.example for the format.\n"
-            f"\n   Common keys:\n"
-            f"     OpenAI:    OPENAI_API_KEY=sk-...\n"
-            f"     Anthropic: ANTHROPIC_API_KEY=sk-ant-...\n"
-            f"     Gemini:    GEMINI_API_KEY=...\n"
-            f"     Groq:      GROQ_API_KEY=gsk_...\n"
-        )
-    except litellm.BadRequestError as e:
-        raise ValueError(
-            f"\n❌ Model '{model}' not recognized.\n"
-            f"   Check the full list at https://models.litellm.ai\n"
-            f"\n   Common model strings:\n"
-            f"     OpenAI:    gpt-4o-mini, gpt-4o\n"
-            f"     Anthropic: claude-haiku-4-5, claude-sonnet-4-6\n"
-            f"     Gemini:    gemini/gemini-2.0-flash\n"
-            f"     Groq:      groq/llama-3.3-70b-versatile\n"
-            f"     Ollama:    ollama/llama3\n"
-            f"\n   Original error: {e}"
-        )
-    except litellm.RateLimitError:
-        raise ValueError(
-            f"\n⏳ Rate limit hit for model '{model}'.\n"
-            f"   Wait a minute and try again, or reduce the number of inputs.\n"
-            f"   If using Groq free tier, the limit is ~30 requests/minute.\n"
-        )
+        if provider == "openai":
+            key = os.getenv("OPENAI_API_KEY")
+            if not key: raise ValueError("Missing OPENAI_API_KEY in .env")
+            return _native_openai_call(model_name, system_prompt, user_input, key)
+        
+        elif provider == "groq":
+            key = os.getenv("GROQ_API_KEY")
+            if not key: raise ValueError("Missing GROQ_API_KEY in .env")
+            return _native_openai_call(model_name, system_prompt, user_input, key, "https://api.groq.com/openai/v1/chat/completions")
+        
+        elif provider == "deepseek":
+            key = os.getenv("DEEPSEEK_API_KEY")
+            if not key: raise ValueError("Missing DEEPSEEK_API_KEY in .env")
+            return _native_openai_call(model_name, system_prompt, user_input, key, "https://api.deepseek.com")
+        
+        elif provider == "ollama":
+            return _native_openai_call(model_name, system_prompt, user_input, "dummy", "http://localhost:11434/v1/chat/completions")
+        
+        elif provider == "anthropic":
+            key = os.getenv("ANTHROPIC_API_KEY")
+            if not key: raise ValueError("Missing ANTHROPIC_API_KEY in .env")
+            return _native_anthropic_call(model_name, system_prompt, user_input, key)
+        
+        elif provider == "gemini":
+            key = os.getenv("GEMINI_API_KEY")
+            if not key: raise ValueError("Missing GEMINI_API_KEY in .env")
+            return _native_gemini_call(model_name, system_prompt, user_input, key)
+        
+        else:
+            # Fallback to litellm for obscure providers
+            try:
+                import litellm
+                litellm.suppress_debug_info = True
+                os.environ.setdefault("LITELLM_LOG", "ERROR")
+                response = litellm.completion(
+                    model=model,
+                    messages=[
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_input}
+                    ]
+                )
+                cost = 0.0
+                try: cost = litellm.completion_cost(completion_response=response)
+                except Exception: pass
+                
+                return {
+                    "text": response.choices[0].message.content or "",
+                    "prompt_tokens": response.usage.prompt_tokens,
+                    "completion_tokens": response.usage.completion_tokens,
+                    "cost": cost
+                }
+            except ImportError:
+                raise ValueError(
+                    f"\n⚠️ To use the advanced provider '{provider}', please install the full version:\n"
+                    f"   pip install \"compare-prompts[all]\""
+                )
     except Exception as e:
-        raise ValueError(
-            f"\n❌ Unexpected error calling model '{model}': {e}\n"
-            f"   Check your internet connection and API key.\n"
-        )
+        raise ValueError(str(e))
 
 
-async def _run_prompt_async(
-    system_prompt: str, user_input: str, model: str, semaphore: asyncio.Semaphore
-) -> dict:
-    """Run a single prompt+input combination asynchronously with rate limiting."""
+async def _run_prompt_async(system_prompt: str, user_input: str, model: str, semaphore: asyncio.Semaphore) -> dict:
+    """Run a single prompt+input combination asynchronously."""
     async with semaphore:
         try:
-            response = await litellm.acompletion(
-                model=model,
-                messages=[
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": user_input}
-                ]
-            )
-
-            output_text = response.choices[0].message.content or ""
-            prompt_tokens = response.usage.prompt_tokens
-            completion_tokens = response.usage.completion_tokens
-
-            try:
-                cost = litellm.completion_cost(completion_response=response)
-            except Exception:
-                cost = 0.0
-
-            return {
-                "text": output_text,
-                "prompt_tokens": prompt_tokens,
-                "completion_tokens": completion_tokens,
-                "cost": cost,
-            }
+            return await asyncio.to_thread(run_prompt, system_prompt, user_input, model)
         except Exception as e:
-            # Return error info instead of crashing the whole batch
             return {
                 "text": f"[ERROR: {e}]",
                 "prompt_tokens": 0,
@@ -129,17 +174,7 @@ async def _run_prompt_async(
 
 
 def run_all(prompts: dict, inputs: list, model: str, use_async: bool = False) -> dict:
-    """
-    Run all prompt+input combinations.
-
-    Args:
-        prompts: dict of {label: system_prompt_string}
-        inputs: list of user input strings
-        model: LiteLLM model string
-        use_async: if True, run calls concurrently (faster for many combinations)
-
-    Returns: dict of {label: [list of result dicts, one per input]}
-    """
+    """Run all prompt+input combinations."""
     total_calls = len(prompts) * len(inputs)
 
     if use_async:
@@ -149,7 +184,6 @@ def run_all(prompts: dict, inputs: list, model: str, use_async: bool = False) ->
 
 
 def _run_all_sync(prompts: dict, inputs: list, model: str, total_calls: int) -> dict:
-    """Run all combinations synchronously with progress indicator."""
     results = {label: [] for label in prompts}
     call_count = 0
 
@@ -160,13 +194,11 @@ def _run_all_sync(prompts: dict, inputs: list, model: str, total_calls: int) -> 
             call_count += 1
             print(f"\r  Running... {call_count}/{total_calls}", end="", flush=True)
 
-    print()  # newline after progress
+    print()
     return results
 
 
 def _run_all_async(prompts: dict, inputs: list, model: str, total_calls: int) -> dict:
-    """Run all combinations concurrently with asyncio."""
-    # Limit concurrency to avoid rate limits (5 parallel calls max)
     semaphore = asyncio.Semaphore(5)
 
     async def _gather():
@@ -180,7 +212,7 @@ def _run_all_async(prompts: dict, inputs: list, model: str, total_calls: int) ->
         results = {}
         for label, task_list in tasks.items():
             results[label] = await asyncio.gather(*task_list, return_exceptions=True)
-            # Convert exceptions to error dicts
+            # Process exceptions
             processed = []
             for r in results[label]:
                 if isinstance(r, Exception):
