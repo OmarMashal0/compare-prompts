@@ -18,7 +18,8 @@ load_dotenv()
 def _native_openai_call(model, system_prompt, user_input, api_key, base_url="https://api.openai.com/v1/chat/completions"):
     req = urllib.request.Request(base_url, headers={
         "Authorization": f"Bearer {api_key}",
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "User-Agent": "compare-prompts/1.0"
     }, data=json.dumps({
         "model": model,
         "messages": [
@@ -45,7 +46,8 @@ def _native_anthropic_call(model, system_prompt, user_input, api_key):
     req = urllib.request.Request("https://api.anthropic.com/v1/messages", headers={
         "x-api-key": api_key,
         "anthropic-version": "2023-06-01",
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "User-Agent": "compare-prompts/1.0"
     }, data=json.dumps({
         "model": model,
         "system": system_prompt,
@@ -70,7 +72,8 @@ def _native_anthropic_call(model, system_prompt, user_input, api_key):
 def _native_gemini_call(model, system_prompt, user_input, api_key):
     url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
     req = urllib.request.Request(url, headers={
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "User-Agent": "compare-prompts/1.0"
     }, data=json.dumps({
         "system_instruction": {"parts": [{"text": system_prompt}]},
         "contents": [{"parts": [{"text": user_input}]}]
