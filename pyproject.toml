@@ -3,7 +3,7 @@ requires = ["setuptools>=68.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "prompt-diff"
+name = "compare-prompts"
 version = "0.1.0"
 description = "Compare LLM prompts side by side — no config, no dashboard, just a table"
 readme = "README.md"
