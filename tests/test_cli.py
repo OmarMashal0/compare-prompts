@@ -1,8 +1,8 @@
-"""Tests for promptdiff.cli — tests the init scaffolding command."""
+"""Tests for compare_prompts.cli — tests the init scaffolding command."""
 
 import os
 from click.testing import CliRunner
-from promptdiff.cli import main
+from compare_prompts.cli import main
 
 
 class TestInitCommand:
@@ -19,7 +19,7 @@ class TestInitCommand:
             runner.invoke(main, ["init"])
             with open("test_prompts.py") as f:
                 content = f.read()
-            assert "from promptdiff import compare" in content
+            assert "from compare_prompts import compare" in content
 
     def test_file_contains_model(self):
         runner = CliRunner()

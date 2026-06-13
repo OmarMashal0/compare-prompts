@@ -5,7 +5,7 @@ Thank you for considering contributing!
 ## Setup
 
 ```bash
-git clone https://github.com/OmarMashal0/promptdiff
+git clone https://github.com/OmarMashal0/compare-prompts
 cd promptdiff
 python -m venv .venv
 

@@ -35,3 +35,8 @@ coverage.xml
 # OS
 .DS_Store
 Thumbs.db
+
+# Documentation
+PROMPTDIFF_PLAN.md
+walkthrough.md
+task.md

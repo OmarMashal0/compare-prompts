@@ -1,7 +1,7 @@
-"""Tests for promptdiff.runner — uses mocked LiteLLM calls, no API key needed."""
+"""Tests for compare_prompts.runner — uses mocked LiteLLM calls, no API key needed."""
 
 from unittest.mock import MagicMock, patch
-from promptdiff.runner import run_prompt, run_all
+from compare_prompts.runner import run_prompt, run_all
 
 
 def make_mock_response(text="Hello world", prompt_tokens=50, completion_tokens=100):
@@ -16,22 +16,22 @@ def make_mock_response(text="Hello world", prompt_tokens=50, completion_tokens=1
 
 
 class TestRunPrompt:
-    @patch("promptdiff.runner.litellm.completion")
-    @patch("promptdiff.runner.litellm.completion_cost", return_value=0.001)
+    @patch("compare_prompts.runner.litellm.completion")
+    @patch("compare_prompts.runner.litellm.completion_cost", return_value=0.001)
     def test_returns_text(self, mock_cost, mock_completion):
         mock_completion.return_value = make_mock_response("Hello world")
         result = run_prompt("You are helpful.", "Say hello.", "gpt-4o-mini")
         assert result["text"] == "Hello world"
 
-    @patch("promptdiff.runner.litellm.completion")
-    @patch("promptdiff.runner.litellm.completion_cost", return_value=0.001)
+    @patch("compare_prompts.runner.litellm.completion")
+    @patch("compare_prompts.runner.litellm.completion_cost", return_value=0.001)
     def test_returns_cost(self, mock_cost, mock_completion):
         mock_completion.return_value = make_mock_response("Response text")
         result = run_prompt("System prompt.", "User input.", "gpt-4o-mini")
         assert result["cost"] == 0.001
 
-    @patch("promptdiff.runner.litellm.completion")
-    @patch("promptdiff.runner.litellm.completion_cost", return_value=0.001)
+    @patch("compare_prompts.runner.litellm.completion")
+    @patch("compare_prompts.runner.litellm.completion_cost", return_value=0.001)
     def test_returns_token_counts(self, mock_cost, mock_completion):
         mock_completion.return_value = make_mock_response(
             "Some output", prompt_tokens=30, completion_tokens=80
@@ -40,9 +40,9 @@ class TestRunPrompt:
         assert result["prompt_tokens"] == 30
         assert result["completion_tokens"] == 80
 
-    @patch("promptdiff.runner.litellm.completion")
+    @patch("compare_prompts.runner.litellm.completion")
     @patch(
-        "promptdiff.runner.litellm.completion_cost",
+        "compare_prompts.runner.litellm.completion_cost",
         side_effect=Exception("no pricing"),
     )
     def test_cost_fallback_to_zero(self, mock_cost, mock_completion):
@@ -52,8 +52,8 @@ class TestRunPrompt:
 
 
 class TestRunAll:
-    @patch("promptdiff.runner.litellm.completion")
-    @patch("promptdiff.runner.litellm.completion_cost", return_value=0.001)
+    @patch("compare_prompts.runner.litellm.completion")
+    @patch("compare_prompts.runner.litellm.completion_cost", return_value=0.001)
     def test_returns_results_for_each_label(self, mock_cost, mock_completion):
         mock_completion.return_value = make_mock_response("Some output")
 
@@ -70,8 +70,8 @@ class TestRunAll:
         assert len(results["prompt_a"]) == 2  # one result per input
         assert len(results["prompt_b"]) == 2
 
-    @patch("promptdiff.runner.litellm.completion")
-    @patch("promptdiff.runner.litellm.completion_cost", return_value=0.001)
+    @patch("compare_prompts.runner.litellm.completion")
+    @patch("compare_prompts.runner.litellm.completion_cost", return_value=0.001)
     def test_correct_number_of_api_calls(self, mock_cost, mock_completion):
         mock_completion.return_value = make_mock_response("Output")
 

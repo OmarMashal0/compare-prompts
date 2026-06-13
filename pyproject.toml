@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "compare-prompts"
-version = "0.1.1"
+version = "0.1.2"
 description = "Compare LLM prompts side by side — no config, no dashboard, just a table"
 readme = "README.md"
 requires-python = ">=3.9"
@@ -43,11 +43,11 @@ dev = [
 ]
 
 [project.scripts]
-compare-prompts = "promptdiff.cli:main"
+compare-prompts = "compare_prompts.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/OmarMashal0/promptdiff"
-Repository = "https://github.com/OmarMashal0/promptdiff"
-Issues = "https://github.com/OmarMashal0/promptdiff/issues"
-Documentation = "https://github.com/OmarMashal0/promptdiff#readme"
-Changelog = "https://github.com/OmarMashal0/promptdiff/blob/main/CHANGELOG.md"
+Homepage = "https://github.com/OmarMashal0/compare-prompts"
+Repository = "https://github.com/OmarMashal0/compare-prompts"
+Issues = "https://github.com/OmarMashal0/compare-prompts/issues"
+Documentation = "https://github.com/OmarMashal0/compare-prompts#readme"
+Changelog = "https://github.com/OmarMashal0/compare-prompts/blob/main/CHANGELOG.md"

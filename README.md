@@ -1,7 +1,7 @@
-# promptdiff
+# compare-prompts
 
 [![PyPI version](https://badge.fury.io/py/compare-prompts.svg)](https://pypi.org/project/compare-prompts/)
-[![CI](https://github.com/OmarMashal0/promptdiff/actions/workflows/ci.yml/badge.svg)](https://github.com/OmarMashal0/promptdiff/actions)
+[![CI](https://github.com/OmarMashal0/compare-prompts/actions/workflows/ci.yml/badge.svg)](https://github.com/OmarMashal0/compare-prompts/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 
@@ -20,7 +20,7 @@ You have two (or more) prompts. You changed one word. Did it actually change any
 - Setting up promptfoo requires YAML config and predefined "correct" answers
 - Platforms like Braintrust/LangSmith require signup and send data to a dashboard
 
-**promptdiff is the missing middle ground** — run it in your script, get a table in your terminal.
+**compare-prompts is the missing middle ground** — run it in your script, get a table in your terminal.
 
 ---
 
@@ -43,7 +43,7 @@ This creates a `test_prompts.py` file you can edit immediately.
 ### Step 3 — Or write your own comparison
 
 ```python
-from promptdiff import compare
+from compare_prompts import compare
 
 compare(
     prompts={
@@ -96,7 +96,7 @@ your-project/                <- your existing project
 Import your prompts directly from your existing code:
 
 ```python
-from promptdiff import compare
+from compare_prompts import compare
 from prompts import PROMPT_V1, PROMPT_V2
 
 compare(
@@ -217,7 +217,7 @@ compare(
 promptfoo is excellent. Use it if you need CI/CD integration, red-teaming,
 or assertion-based testing with expected outputs.
 
-**promptdiff is for when you just want to run prompts right now** and see how they
+**compare-prompts is for when you just want to run prompts right now** and see how they
 behave differently — no YAML, no config, no web server, no predefined "correct"
 answers. Just a table in your terminal.
 

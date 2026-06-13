@@ -2,7 +2,7 @@
 promptdiff — Compare LLM prompts side by side.
 
 Usage:
-    from promptdiff import compare
+    from compare_prompts import compare
 
     compare(
         prompts={
@@ -15,8 +15,8 @@ Usage:
 """
 
 from dotenv import load_dotenv
-from promptdiff.runner import run_all
-from promptdiff.display import print_table
+from compare_prompts.runner import run_all
+from compare_prompts.display import print_table
 
 load_dotenv()
 
@@ -59,7 +59,7 @@ def compare(
         ValueError: If API key is missing or model name is invalid.
 
     Example:
-        >>> from promptdiff import compare
+        >>> from compare_prompts import compare
         >>> compare(
         ...     prompts={
         ...         "original": "You are a helpful assistant.",

@@ -1,7 +1,7 @@
 """
 CLI entry point for promptdiff.
 
-Provides the `promptdiff init` command that generates a ready-to-use
+Provides the `compare-prompts init` command that generates a ready-to-use
 test_prompts.py file in the current directory.
 """
 
@@ -21,7 +21,7 @@ Step-by-Step Guide:
 6. View the comparison table in your terminal!
 """
 
-from promptdiff import compare
+from compare_prompts import compare
 
 compare(
     prompts={

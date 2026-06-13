@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - LiteLLM integration (2,600+ models supported)
 - `show_outputs` parameter for viewing raw responses
 - `use_async` parameter for concurrent execution
-- `promptdiff init` CLI command for scaffolding test files
+- `compare-prompts init` CLI command for scaffolding test files
 - Progress indicator during API calls
 - Clear error messages for missing API keys, invalid model names, and rate limits
 - Comprehensive test suite (no API keys needed to run tests)

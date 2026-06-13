@@ -1,6 +1,6 @@
-"""Tests for promptdiff.metrics — no API calls, no API key needed."""
+"""Tests for compare_prompts.metrics — no API calls, no API key needed."""
 
-from promptdiff.metrics import measure
+from compare_prompts.metrics import measure
 
 
 class TestListDetection:

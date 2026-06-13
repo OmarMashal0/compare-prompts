@@ -7,7 +7,7 @@ Uses the Rich library for beautiful terminal output.
 from rich.console import Console
 from rich.table import Table
 from rich import box
-from promptdiff.metrics import measure
+from compare_prompts.metrics import measure
 
 console = Console()
 
