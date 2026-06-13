@@ -24,7 +24,7 @@ pip install -e ".[dev]"
 pytest tests/ -v
 ```
 
-Tests do not require any API keys — all LiteLLM calls are mocked.
+Tests do not require any API keys — all native HTTP API calls are mocked.
 
 ## Adding a new metric
 
