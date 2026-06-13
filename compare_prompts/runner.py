@@ -34,7 +34,7 @@ def _native_openai_call(model, system_prompt, user_input, api_key, base_url="htt
                 "text": data["choices"][0]["message"]["content"],
                 "prompt_tokens": data.get("usage", {}).get("prompt_tokens", 0),
                 "completion_tokens": data.get("usage", {}).get("completion_tokens", 0),
-                "cost": 0.0
+                "cost": None
             }
     except HTTPError as e:
         err = e.read().decode()
@@ -60,7 +60,7 @@ def _native_anthropic_call(model, system_prompt, user_input, api_key):
                 "text": data["content"][0]["text"],
                 "prompt_tokens": data.get("usage", {}).get("input_tokens", 0),
                 "completion_tokens": data.get("usage", {}).get("output_tokens", 0),
-                "cost": 0.0
+                "cost": None
             }
     except HTTPError as e:
         err = e.read().decode()
@@ -85,7 +85,7 @@ def _native_gemini_call(model, system_prompt, user_input, api_key):
                 "text": text,
                 "prompt_tokens": usage.get("promptTokenCount", 0),
                 "completion_tokens": usage.get("candidatesTokenCount", 0),
-                "cost": 0.0
+                "cost": None
             }
     except HTTPError as e:
         err = e.read().decode()
@@ -97,65 +97,76 @@ def run_prompt(system_prompt: str, user_input: str, model: str) -> dict:
     provider = model.split("/")[0] if "/" in model else "openai"
     model_name = model.split("/", 1)[1] if "/" in model else model
 
-    try:
-        if provider == "openai":
-            key = os.getenv("OPENAI_API_KEY")
-            if not key: raise ValueError("Missing OPENAI_API_KEY in .env")
-            return _native_openai_call(model_name, system_prompt, user_input, key)
-        
-        elif provider == "groq":
-            key = os.getenv("GROQ_API_KEY")
-            if not key: raise ValueError("Missing GROQ_API_KEY in .env")
-            return _native_openai_call(model_name, system_prompt, user_input, key, "https://api.groq.com/openai/v1/chat/completions")
-        
-        elif provider == "deepseek":
-            key = os.getenv("DEEPSEEK_API_KEY")
-            if not key: raise ValueError("Missing DEEPSEEK_API_KEY in .env")
-            return _native_openai_call(model_name, system_prompt, user_input, key, "https://api.deepseek.com")
-        
-        elif provider == "ollama":
-            return _native_openai_call(model_name, system_prompt, user_input, "dummy", "http://localhost:11434/v1/chat/completions")
-        
-        elif provider == "anthropic":
-            key = os.getenv("ANTHROPIC_API_KEY")
-            if not key: raise ValueError("Missing ANTHROPIC_API_KEY in .env")
-            return _native_anthropic_call(model_name, system_prompt, user_input, key)
-        
-        elif provider == "gemini":
-            key = os.getenv("GEMINI_API_KEY")
-            if not key: raise ValueError("Missing GEMINI_API_KEY in .env")
-            return _native_gemini_call(model_name, system_prompt, user_input, key)
-        
-        else:
-            # Fallback to litellm for obscure providers
-            try:
-                import litellm
-                litellm.suppress_debug_info = True
-                os.environ.setdefault("LITELLM_LOG", "ERROR")
-                response = litellm.completion(
-                    model=model,
-                    messages=[
-                        {"role": "system", "content": system_prompt},
-                        {"role": "user", "content": user_input}
-                    ]
-                )
-                cost = 0.0
-                try: cost = litellm.completion_cost(completion_response=response)
-                except Exception: pass
-                
-                return {
-                    "text": response.choices[0].message.content or "",
-                    "prompt_tokens": response.usage.prompt_tokens,
-                    "completion_tokens": response.usage.completion_tokens,
-                    "cost": cost
-                }
-            except ImportError:
-                raise ValueError(
-                    f"\n⚠️ To use the advanced provider '{provider}', please install the full version:\n"
-                    f"   pip install \"compare-prompts[all]\""
-                )
-    except Exception as e:
-        raise ValueError(str(e))
+    if provider == "openai":
+        key = os.getenv("OPENAI_API_KEY")
+        if not key: raise ValueError("Missing OPENAI_API_KEY in .env")
+        result = _native_openai_call(model_name, system_prompt, user_input, key)
+    
+    elif provider == "groq":
+        key = os.getenv("GROQ_API_KEY")
+        if not key: raise ValueError("Missing GROQ_API_KEY in .env")
+        result = _native_openai_call(model_name, system_prompt, user_input, key, "https://api.groq.com/openai/v1/chat/completions")
+    
+    elif provider == "deepseek":
+        key = os.getenv("DEEPSEEK_API_KEY")
+        if not key: raise ValueError("Missing DEEPSEEK_API_KEY in .env")
+        result = _native_openai_call(model_name, system_prompt, user_input, key, "https://api.deepseek.com")
+    
+    elif provider == "ollama":
+        result = _native_openai_call(model_name, system_prompt, user_input, "dummy", "http://localhost:11434/v1/chat/completions")
+    
+    elif provider == "anthropic":
+        key = os.getenv("ANTHROPIC_API_KEY")
+        if not key: raise ValueError("Missing ANTHROPIC_API_KEY in .env")
+        result = _native_anthropic_call(model_name, system_prompt, user_input, key)
+    
+    elif provider == "gemini":
+        key = os.getenv("GEMINI_API_KEY")
+        if not key: raise ValueError("Missing GEMINI_API_KEY in .env")
+        result = _native_gemini_call(model_name, system_prompt, user_input, key)
+    
+    else:
+        # Fallback to litellm for obscure providers
+        try:
+            import litellm
+            litellm.suppress_debug_info = True
+            os.environ.setdefault("LITELLM_LOG", "ERROR")
+            response = litellm.completion(
+                model=model,
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_input}
+                ]
+            )
+            cost = None
+            try: cost = litellm.completion_cost(completion_response=response)
+            except Exception: pass
+            
+            result = {
+                "text": response.choices[0].message.content,
+                "prompt_tokens": response.usage.prompt_tokens if hasattr(response, 'usage') else 0,
+                "completion_tokens": response.usage.completion_tokens if hasattr(response, 'usage') else 0,
+                "cost": cost
+            }
+        except ImportError:
+            raise ValueError(f"\n⚠️ To use the advanced provider '{provider}', please install the full version:\n   pip install \"compare-prompts[all]\"\n")
+        except Exception as e:
+            raise ValueError(f"\n❌ Unexpected error calling model '{model}': {type(e).__name__}: {str(e)}\n   Check your internet connection and API key.\n")
+
+    # Dynamically calculate cost if litellm is installed and cost is missing
+    if result.get("cost") is None:
+        try:
+            import litellm
+            p_cost, c_cost = litellm.cost_per_token(
+                model=model, 
+                prompt_tokens=result.get("prompt_tokens", 0), 
+                completion_tokens=result.get("completion_tokens", 0)
+            )
+            result["cost"] = p_cost + c_cost
+        except Exception:
+            pass
+
+    return result
 
 
 async def _run_prompt_async(system_prompt: str, user_input: str, model: str, semaphore: asyncio.Semaphore) -> dict:

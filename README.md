@@ -76,6 +76,7 @@ Running 2 prompts x 3 inputs = 6 calls...  done
   tone                   warm                 neutral
   uses lists             67%                  33%
   uses headers           33%                  0%
+  avg cost (USD)*        $0.0021              $0.0009
   refusal rate           0%                   0%
   reading level          high school          middle school
 ```
@@ -210,9 +211,12 @@ compare(
 | uses lists | % of responses using bullet points or numbered lists |
 | uses headers | % of responses using markdown headers |
 | uses code blocks | % of responses using fenced code blocks |
+| avg cost (USD)* | Estimated cost per response based on token usage |
 | refusal rate | % of responses that refused to answer |
 | reading level | elementary / middle school / high school / college |
 | avg sentence length | Average number of words per sentence |
+
+*(Note: Calculating API costs requires installing the full version: `pip install "compare-prompts[all]"`)*
 
 ---
 

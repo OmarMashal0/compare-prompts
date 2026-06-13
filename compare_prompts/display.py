@@ -58,7 +58,8 @@ def aggregate(results_for_label: list) -> dict:
     levels = [a["reading_level"] for a in analyzed]
     reading_level = max(set(levels), key=levels.count)
 
-    avg_cost = sum(r["cost"] for r in valid_results) / n
+    valid_costs = [r["cost"] for r in valid_results if r.get("cost") is not None]
+    avg_cost = sum(valid_costs) / len(valid_costs) if valid_costs else None
 
     avg_sentence_length = round(
         sum(a["avg_sentence_length"] for a in analyzed) / n, 1
@@ -189,10 +190,12 @@ def print_table(prompts: dict, all_results: dict):
     )
 
     # Row: avg cost
-    table.add_row(
-        "avg cost (USD)",
-        *[f"${aggregated[label]['avg_cost']:.4f}" for label in labels]
-    )
+    has_cost = any(aggregated[label]["avg_cost"] is not None for label in labels)
+    if has_cost:
+        table.add_row(
+            "avg cost (USD)",
+            *[f"${aggregated[label]['avg_cost']:.4f}" if aggregated[label]["avg_cost"] is not None else "N/A" for label in labels]
+        )
 
     # Row: refusal rate
     table.add_row(
