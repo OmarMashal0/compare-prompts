@@ -41,7 +41,7 @@ def compare(
         inputs:  List of user input strings to test each prompt against.
                  Minimum 1 input required. Use real questions from your actual users
                  for the most meaningful results.
-        model:   LiteLLM model string. Default is "gpt-4o-mini".
+        model:   Model string. Default is "gpt-4o-mini".
                  Examples:
                    "gpt-4o-mini"                   (OpenAI)
                    "claude-haiku-4-5"               (Anthropic)
