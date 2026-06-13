@@ -1,5 +1,5 @@
 """
-promptdiff — Compare LLM prompts side by side.
+compare-prompts — Compare LLM prompts side by side.
 
 Usage:
     from compare_prompts import compare

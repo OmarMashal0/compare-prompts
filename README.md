@@ -117,7 +117,7 @@ Create a `.env` file in your project root (or use an existing one):
 OPENAI_API_KEY=sk-...
 ```
 
-promptdiff automatically reads `.env` files. No extra configuration.
+compare-prompts automatically reads `.env` files. No extra configuration.
 
 ### Get an API key
 

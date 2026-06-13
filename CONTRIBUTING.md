@@ -1,4 +1,4 @@
-# Contributing to promptdiff
+# Contributing to compare-prompts
 
 Thank you for considering contributing!
 
@@ -6,7 +6,7 @@ Thank you for considering contributing!
 
 ```bash
 git clone https://github.com/OmarMashal0/compare-prompts
-cd promptdiff
+cd compare-prompts
 python -m venv .venv
 
 # Windows PowerShell:
@@ -28,9 +28,9 @@ Tests do not require any API keys — all LiteLLM calls are mocked.
 
 ## Adding a new metric
 
-1. Add the analysis logic to `promptdiff/metrics.py` inside the `measure()` function
-2. Add the metric to the aggregation in `promptdiff/display.py` -> `aggregate()` function
-3. Add a new row in `promptdiff/display.py` -> `print_table()` function
+1. Add the analysis logic to `compare_prompts/metrics.py` inside the `measure()` function
+2. Add the metric to the aggregation in `compare_prompts/display.py` -> `aggregate()` function
+3. Add a new row in `compare_prompts/display.py` -> `print_table()` function
 4. Add at least 2 tests in `tests/test_metrics.py`
 5. Update the "What it measures" table in `README.md`
 

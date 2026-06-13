@@ -1,5 +1,5 @@
 """
-CLI entry point for promptdiff.
+CLI entry point for compare-prompts.
 
 Provides the `compare-prompts init` command that generates a ready-to-use
 test_prompts.py file in the current directory.

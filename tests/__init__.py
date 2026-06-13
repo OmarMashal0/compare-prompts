@@ -1,3 +1,1 @@
-"""
-Tests for Promptdiff.
-"""
+"""Tests for compare-prompts."""
