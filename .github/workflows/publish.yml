@@ -25,6 +25,7 @@ jobs:
     environment: release
     permissions:
       id-token: write  # Required for Trusted Publishing (OIDC)
+      contents: read   # Required to checkout the repository code
     steps:
       - uses: actions/checkout@v4
 

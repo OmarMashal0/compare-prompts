@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "compare-prompts"
-version = "0.2.1"
+version = "0.2.2"
 description = "Compare LLM prompts side by side — no config, no dashboard, just a table"
 readme = "README.md"
 requires-python = ">=3.9"
