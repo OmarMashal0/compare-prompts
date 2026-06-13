@@ -223,6 +223,22 @@ answers. Just a table in your terminal.
 
 ---
 
+## Contributing & Ideas
+
+**All contributions are wildly welcomed and appreciated!** 
+
+If you have a totally different idea for a metric, a new AI provider, or a UI tweak, PRs are always welcome. Some ideas that would be awesome to add:
+- A local cache so rerunning the exact same prompt doesn't hit the API twice.
+- A metric that measures the "cohesiveness" of an answer.
+- Exporting the terminal table to a CSV or JSON file.
+- Adding a `.gitignore` generator to the `init` command so beginners don't leak their `.env` files.
+
+If you have your own idea that isn't on this list, it is also good and all good! Build it and open a PR.
+
+⭐ **If you find this tool useful or like the idea, please don't forget to star the repository!** ⭐
+
+---
+
 ## License
 
 MIT
