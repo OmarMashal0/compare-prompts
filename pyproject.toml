@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.9"
 license = {text = "MIT"}
 authors = [
-    {name = "Omar Mashal", email = "omarmashal@example.com"}
+    {name = "Omar Mashal", email = "omar.a.mashal11@gmail.com"}
 ]
 keywords = ["llm", "prompt", "comparison", "diff", "ai", "openai", "anthropic", "gemini", "evaluation"]
 classifiers = [

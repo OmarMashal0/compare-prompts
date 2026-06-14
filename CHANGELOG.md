@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Unified the `init` command flow so users are directly guided to generate and edit a comparison file rather than having disjointed options.
 - Added explicit trailing commas to code examples to make copy-pasting easier and prevent syntax errors.
 - **UI:** Added helpful interactive tips directly to the terminal output guiding users to use `use_async=True` (if running many prompts) and `show_outputs=True` (to see raw LLM text).
+- **Metadata:** Fixed incorrect author email address in package setup.
 
 ## [0.3.0] - 2026-06-14
 
