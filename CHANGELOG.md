@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.1] - 2026-06-14
+
+### Changed
+- Massive README rewrite to improve the onboarding flow for new users, moving API key instructions earlier and highlighting free tier options like Groq.
+- Unified the `init` command flow so users are directly guided to generate and edit a comparison file rather than having disjointed options.
+- Added explicit trailing commas to code examples to make copy-pasting easier and prevent syntax errors.
+- **UI:** Added helpful interactive tips directly to the terminal output guiding users to use `use_async=True` (if running many prompts) and `show_outputs=True` (to see raw LLM text).
+
 ## [0.3.0] - 2026-06-14
 
 ### Changed
