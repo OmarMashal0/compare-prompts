@@ -38,6 +38,8 @@ You have two prompts. You changed one word. Did it actually change anything?
   refusal rate          0%                   0%
   reading level         high school          middle school
   avg sentence length   18.3 words           9.1 words  (-50%)
+
+  💡 Tip: Want to see the full raw responses? Add show_outputs=True to your compare() function
 ```
 
 Each column is a prompt. Each row is a measured behavioral difference. No guessing.
@@ -134,7 +136,7 @@ python test_prompts.py
 ### Step 5 — Read the table
 
 ```
-  Running 2 prompts x 3 inputs = 6 calls...
+  Running 2 prompts x 3 inputs = 6 calls...  (Tip: too slow? Add use_async=True to your compare() function)
 
                    Prompt Comparison Results
  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -146,6 +148,8 @@ python test_prompts.py
   refusal rate          0%                   0%
   reading level         high school          middle school
   avg sentence length   18.3 words           9.1 words  (-50%)
+
+  💡 Tip: Want to see the full raw responses? Add show_outputs=True to your compare() function
 ```
 
 Numbers in parentheses are diffs from the first (baseline) prompt.
