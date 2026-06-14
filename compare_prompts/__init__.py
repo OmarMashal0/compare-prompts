@@ -116,9 +116,10 @@ def compare(
 
     # --- Run all combinations ---
     total = len(prompts) * len(inputs)
+    async_tip = "" if use_async else "  (Tip: too slow? pass use_async=True)"
     print(
         f"\n  Running {len(prompts)} prompts x {len(inputs)} inputs "
-        f"= {total} calls...\n"
+        f"= {total} calls...{async_tip}\n"
     )
 
     all_results = run_all(prompts, inputs, model, use_async=use_async)
@@ -129,6 +130,8 @@ def compare(
     # --- Optionally print raw outputs ---
     if show_outputs:
         _print_outputs(prompts, inputs, all_results)
+    else:
+        print("  💡 Tip: Want to see the full raw responses? Pass show_outputs=True\n")
 
 
 def _print_outputs(prompts: dict, inputs: list, all_results: dict):
