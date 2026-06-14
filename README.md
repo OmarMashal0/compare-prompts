@@ -34,15 +34,9 @@ You have two (or more) prompts. You changed one word. Did it actually change any
 pip install compare-prompts
 ```
 
-### Step 2 — Generate a starter file (optional)
+### Step 2 — Write a comparison
 
-```bash
-python -m compare_prompts init
-```
-
-This creates a `test_prompts.py` file you can edit immediately.
-
-### Step 3 — Or write your own comparison
+Create a file (e.g. `test_prompts.py`):
 
 ```python
 from compare_prompts import compare
@@ -57,20 +51,24 @@ compare(
         "What is recursion?",
         "Write a short poem about coding.",
     ],
-    model="gpt-4o-mini"
+    model="gpt-4o-mini"  # or "groq/llama-3.3-70b-versatile" for a free option
 )
 ```
 
-### Step 4 — Run it
+> **Tip:** Don't have an API key yet? [Groq](https://console.groq.com/keys) offers a free tier — just swap the model to `"groq/llama-3.3-70b-versatile"` and set `GROQ_API_KEY` in your `.env`.
+
+> **Prefer a starter file?** Run `python -m compare_prompts init` to generate a ready-to-edit `test_prompts.py` instead of writing from scratch.
+
+### Step 3 — Run it
 
 ```bash
 python test_prompts.py
 ```
 
-### Step 5 — See results
+### Step 4 — See results
 
 ```
-  Running 2 prompts x 3 inputs = 6 calls...  done
+  Running 2 prompts x 3 inputs = 6 calls...
 
                    Prompt Comparison Results
  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -82,6 +80,8 @@ python test_prompts.py
   refusal rate           0%                   0%
   reading level          high school          middle school
 ```
+
+The **tone** column shows the dominant tone with a confidence percentage. When a second tone is also strong, it appears after `·` (e.g. `analytical (54%) · cautious` means primarily analytical with a notable cautious undertone).
 
 ---
 
@@ -209,7 +209,7 @@ compare(
 | Metric | Description |
 |---|---|
 | avg length (tokens) | Average response length in tokens |
-| tone | Detected tone with confidence: e.g. `technical (71%)` or `formal (52%) · cautious`. Covers 9 categories: technical, formal, analytical, casual, empathetic, humorous, encouraging, cautious, assertive |
+| tone | Dominant tone with confidence, e.g. `technical (71%)`. If a second tone is also strong, it appears after `·`: `formal (52%) · cautious`. Covers 9 categories: `technical`, `formal`, `analytical`, `casual`, `empathetic`, `humorous`, `encouraging`, `cautious`, `assertive` |
 | uses lists | % of responses using bullet points or numbered lists |
 | uses headers | % of responses using markdown headers |
 | uses code blocks | % of responses using fenced code blocks |
@@ -244,7 +244,7 @@ Here are some major features I plan to build into `compare-prompts` in the futur
 - **Local Caching:** Adding a local cache so re-running the exact same prompt doesn't hit the API twice.
 - **CLI Safety Guards:** Adding a `.gitignore` generator to the `init` command so beginners don't leak their `.env` files.
 
-While I plan to implement these, **all contributions are wildly welcomed and appreciated!** If you want to tackle any of these items, or if you have a totally different idea for a metric, a new AI provider, or a UI tweak, PRs are always welcome. If you have your own idea that isn't on this list, that is also good and all good! Build it and open a PR.
+While I plan to implement these, **all contributions are wildly welcomed and appreciated!** If you want to tackle any of these items, or have a totally different idea — a new metric, a new AI provider, or a UI tweak — open a PR. Ideas not on this list are just as welcome.
 
 ⭐ **If you find this tool useful or like the idea, please don't forget to star the repository!** ⭐
 
