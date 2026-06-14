@@ -269,11 +269,16 @@ def tone_label_from_scores(avg_scores: dict[str, float]) -> str:
     Returns:
         Display string in same format as _detect_tone().
     """
-    if avg_scores.get("neutral", 0) == 1.0:
+    # Neutral sentinel: either all inputs had no tone signal (value close to 1.0)
+    # or the majority of the averaged weight is on the neutral placeholder
+    if avg_scores.get("neutral", 0) > 0.5:
         return "neutral"
 
     # Filter out the neutral sentinel key if present
     scores = {k: v for k, v in avg_scores.items() if k != "neutral"}
+
+    if not scores:
+        return "neutral"
 
     ranked = sorted(scores.items(), key=lambda x: x[1], reverse=True)
     primary_tone, primary_prob = ranked[0]
