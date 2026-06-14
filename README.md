@@ -56,6 +56,8 @@ pip install compare-prompts
 
 ### Step 2 — Get an API key
 
+> **Already have a `.env` file with an API key?** Skip this step entirely — compare-prompts will pick it up automatically.
+
 You need an API key for whichever provider you want to use. Create a `.env` file in your project root:
 
 ```bash
@@ -96,17 +98,23 @@ from compare_prompts import compare
 
 compare(
     prompts={
+        # Each key is a label shown in the table column.
+        # Each value is the system prompt you want to test.
         "original": "You are a helpful assistant.",
         "concise":  "You are a concise helpful assistant.",
     },
     inputs=[
+        # These are the user messages sent to each prompt.
+        # Use real questions your users actually ask for the most useful results.
         "Explain what a database is.",
         "What is recursion?",
         "Write a short poem about coding.",
     ],
-    model="gpt-4o-mini"  # see full model list below
+    model="gpt-4o-mini"  # ← change this to match your provider
 )
 ```
+
+> **Which model string to use?** See the [Supported models](#supported-models) section below for the exact strings for each provider (OpenAI, Groq, Gemini, etc.).
 
 ---
 
@@ -115,6 +123,10 @@ compare(
 ```bash
 python test_prompts.py
 ```
+
+> **Too slow?** If you have many prompts or inputs, add `use_async=True` to run all API calls in parallel. See [Faster execution with async](#faster-execution-with-async) below.
+
+> **Want to see the actual responses?** Add `show_outputs=True` to print the raw LLM output below the table. See [See raw outputs](#see-raw-outputs) below.
 
 ---
 
