@@ -81,17 +81,13 @@ compare-prompts reads `.env` files automatically. No extra setup.
 
 ### Step 3 — Create your comparison file
 
-**Option A — Generate a starter file automatically:**
+Generate a starter file by running:
 
 ```bash
 python -m compare_prompts init
 ```
 
-This creates a ready-to-edit `test_prompts.py` in your current directory. Open it, swap in your prompts, and you're done.
-
-**Option B — Write it from scratch:**
-
-Create any `.py` file (e.g. `test_prompts.py`):
+This creates a `test_prompts.py` file in your directory. Open it up, and you'll see a template that looks like this:
 
 ```python
 from compare_prompts import compare
@@ -114,7 +110,12 @@ compare(
 )
 ```
 
-> **Which model string to use?** See the [Supported models](#supported-models) section below for the exact strings for each provider (OpenAI, Groq, Gemini, etc.).
+**How to edit this file:**
+- **prompts:** Swap the example text with the actual prompts you want to compare.
+- **inputs:** Add the test questions you want to evaluate those prompts against.
+- **model:** Change the model string to match your provider. See the [Supported models](#supported-models) section below for the exact strings to use for OpenAI, Groq, Gemini, etc.
+
+*(Note: If you don't want to use the `init` command, you can also just create `test_prompts.py` manually and paste the code above into it.)*
 
 ---
 
