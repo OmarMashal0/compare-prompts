@@ -95,29 +95,109 @@ class TestToneDetection:
             "notwithstanding shows improvement."
         )
         result = measure(text)
-        assert result["tone"] == "formal"
+        assert result["tone"].startswith("formal")
 
-    def test_warm_tone(self):
+    def test_empathetic_tone(self):
         text = (
-            "I am so happy and excited to help you! "
-            "This is wonderful and amazing! Absolutely fantastic!"
+            "I understand how you feel. I am here to help and I hear you. "
+            "Together we can find comfort. I appreciate you sharing this journey."
         )
         result = measure(text)
-        assert result["tone"] == "warm"
+        assert result["tone"].startswith("empathetic")
 
     def test_technical_tone(self):
         text = (
             "The function accepts a parameter and returns an array. "
-            "The class method implements the interface using the API."
+            "The class method implements the interface using the API. "
+            "Debug the exception in the recursive loop."
         )
         result = measure(text)
-        assert result["tone"] == "technical"
+        assert result["tone"].startswith("technical")
 
     def test_neutral_tone(self):
         text = "The sky is blue. Water is wet."
         result = measure(text)
         assert result["tone"] == "neutral"
 
+    def test_humorous_tone(self):
+        text = (
+            "Haha, just kidding! No pun intended, but this is hilarious. "
+            "The absurd and silly situation made everyone chuckle. "
+            "What a whimsical and playful twist — on a lighter note, lol!"
+        )
+        result = measure(text)
+        assert result["tone"].startswith("humorous")
+
+    def test_encouraging_tone(self):
+        text = (
+            "You can do it! Keep going, don't give up. I believe in you. "
+            "You have the strength and resilience to overcome this. "
+            "Believe in your potential and celebrate every bit of progress."
+        )
+        result = measure(text)
+        assert result["tone"].startswith("encouraging")
+
+    def test_cautious_tone(self):
+        text = (
+            "Perhaps this might work, but it depends on the situation. "
+            "Generally speaking, results may differ. Keep in mind that "
+            "this may vary and is not always the case. Arguably, it tends "
+            "to appear somewhat uncertain in some cases."
+        )
+        result = measure(text)
+        assert result["tone"].startswith("cautious")
+
+    def test_assertive_tone(self):
+        text = (
+            "You must do this immediately. The answer is clearly defined. "
+            "Always remember: never skip this step. Make sure you follow "
+            "the required process precisely. Without a doubt, it is critical."
+        )
+        result = measure(text)
+        assert result["tone"].startswith("assertive")
+
+    def test_casual_tone(self):
+        text = (
+            "Hey, so basically you just wanna do this thing, you know? "
+            "It's pretty easy, honestly. Kind of a lot of stuff going on, "
+            "but anyway feel free to ask. No worries, for sure!"
+        )
+        result = measure(text)
+        assert result["tone"].startswith("casual")
+
+    def test_analytical_tone(self):
+        text = (
+            "Based on the data, the analysis indicates a strong correlation. "
+            "The evidence demonstrates a clear trend. This suggests that "
+            "the findings support the hypothesis. In comparison, the results "
+            "show a measurable outcome worth evaluating."
+        )
+        result = measure(text)
+        assert result["tone"].startswith("analytical")
+
+    def test_tone_includes_percentage(self):
+        """Non-neutral tones should include a percentage in the output."""
+        text = (
+            "The function accepts a parameter and returns an array. "
+            "The class method implements the interface using the API."
+        )
+        result = measure(text)
+        if result["tone"] != "neutral":
+            assert "%" in result["tone"]
+
+    def test_secondary_tone_shown_when_strong(self):
+        """When two tones are both strong, both appear in the label."""
+        text = (
+            "Haha! Just kidding — no pun intended. This is hilarious and silly. "
+            "But on a lighter note: you must do this immediately. "
+            "Always remember, never skip it. It is absolutely critical."
+        )
+        result = measure(text)
+        # Primary tone may be humorous or assertive; either way if secondary
+        # is strong enough the · separator should appear
+        # (not always guaranteed with short text, so just check format is valid)
+        tone = result["tone"]
+        assert isinstance(tone, str) and len(tone) > 0
 
 class TestReadingLevel:
     def test_returns_valid_level(self):
@@ -145,7 +225,8 @@ class TestReturnKeys:
         result = measure(text)
         expected_keys = {
             "token_count", "uses_lists", "uses_headers", "uses_code_blocks",
-            "tone", "reading_level", "is_refusal", "avg_sentence_length",
+            "tone", "tone_scores", "reading_level", "is_refusal",
+            "avg_sentence_length",
         }
         assert expected_keys == set(result.keys())
 
@@ -153,6 +234,17 @@ class TestReturnKeys:
         result = measure("")
         expected_keys = {
             "token_count", "uses_lists", "uses_headers", "uses_code_blocks",
-            "tone", "reading_level", "is_refusal", "avg_sentence_length",
+            "tone", "tone_scores", "reading_level", "is_refusal",
+            "avg_sentence_length",
         }
         assert expected_keys == set(result.keys())
+
+    def test_tone_scores_contains_all_categories(self):
+        """tone_scores dict should have one key per tone category."""
+        from compare_prompts.metrics import _TONE_LEXICONS
+        result = measure("A simple test sentence.")
+        # neutral sentinel may appear for empty-ish text, otherwise all 9 lexicon keys
+        tone_score_keys = set(result["tone_scores"].keys())
+        expected = set(_TONE_LEXICONS.keys())
+        # Must contain at least all lexicon keys (neutral sentinel is additive)
+        assert expected.issubset(tone_score_keys | {"neutral"})

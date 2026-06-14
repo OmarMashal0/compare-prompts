@@ -70,12 +70,12 @@ python test_prompts.py
 ### Step 5 — See results
 
 ```
-Running 2 prompts x 3 inputs = 6 calls...  done
+  Running 2 prompts x 3 inputs = 6 calls...  done
 
                    Prompt Comparison Results
  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   avg length (tokens)    187                  61  (-67%)
-  tone                   warm                 neutral
+  tone                   empathetic (61%)     analytical (54%) · cautious
   uses lists             67%                  33%
   uses headers           33%                  0%
   avg cost (USD)*        $0.0021              $0.0009
@@ -209,7 +209,7 @@ compare(
 | Metric | Description |
 |---|---|
 | avg length (tokens) | Average response length in tokens |
-| tone | Detected tone: neutral, formal, warm, or technical |
+| tone | Detected tone with confidence: e.g. `technical (71%)` or `formal (52%) · cautious`. Covers 9 categories: technical, formal, analytical, casual, empathetic, humorous, encouraging, cautious, assertive |
 | uses lists | % of responses using bullet points or numbered lists |
 | uses headers | % of responses using markdown headers |
 | uses code blocks | % of responses using fenced code blocks |

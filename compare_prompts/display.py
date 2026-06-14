@@ -7,7 +7,7 @@ Uses the Rich library for beautiful terminal output.
 from rich.console import Console
 from rich.table import Table
 from rich import box
-from compare_prompts.metrics import measure
+from compare_prompts.metrics import measure, tone_label_from_scores
 
 console = Console()
 
@@ -50,9 +50,13 @@ def aggregate(results_for_label: list) -> dict:
     )
     refusal_pct = int(sum(1 for a in analyzed if a["is_refusal"]) / n * 100)
 
-    # Most common tone
-    tones = [a["tone"] for a in analyzed]
-    tone = max(set(tones), key=tones.count)
+    # Tone: average softmax probability vectors across all inputs, then label
+    tone_keys = list(analyzed[0]["tone_scores"].keys())
+    avg_tone_scores = {
+        k: sum(a["tone_scores"].get(k, 0.0) for a in analyzed) / n
+        for k in tone_keys
+    }
+    tone = tone_label_from_scores(avg_tone_scores)
 
     # Most common reading level
     levels = [a["reading_level"] for a in analyzed]
