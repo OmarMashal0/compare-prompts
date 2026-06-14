@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-06-14
+
+### Changed
+- **Overhauled tone detection** — replaced the 3-word-list heuristic with a proper 9-category system: `technical`, `formal`, `analytical`, `casual`, `empathetic`, `humorous`, `encouraging`, `cautious`, `assertive`.
+- Tone scoring now uses whole-word regex matching (`\b` boundaries) instead of substring search, eliminating false positives (e.g. `class` no longer matches `classical`).
+- Tone scoring now counts per-occurrence frequency rather than just checking keyword presence.
+- All tone scores are length-normalized (hits per 100 words) so short and long responses are treated fairly.
+- Scores are converted to a softmax probability distribution for principled multi-category classification.
+- **New display format:** tone row now shows `"technical (71%)"` (primary + confidence) or `"technical (52%) · cautious"` (when secondary tone exceeds 33% share), instead of a single flat label.
+- Aggregation across multiple inputs now averages softmax probability vectors rather than picking the modal string — much more accurate for mixed-tone prompt comparisons.
+- Added `tone_scores` key to `measure()` return dict (dict of softmax probabilities per category, used internally for aggregation).
+- Expanded test suite: 12 tone tests (up from 4), covering all 9 categories plus format validation.
+
 ## [0.2.4] - 2026-06-13
 
 ### Fixed
