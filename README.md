@@ -212,7 +212,7 @@ compare(
         "formal":   "You are a professional formal assistant.",
         "friendly": "You are a warm friendly assistant.",
     },
-    inputs=["your test questions"]
+    inputs=["your test questions"],
 )
 ```
 
@@ -224,7 +224,7 @@ Print each LLM response below the table, grouped by input:
 compare(
     prompts={...},
     inputs=[...],
-    show_outputs=True
+    show_outputs=True,
 )
 ```
 
@@ -236,7 +236,7 @@ Run all API calls concurrently — useful when you have many prompt × input com
 compare(
     prompts={...},
     inputs=[...],
-    use_async=True
+    use_async=True,
 )
 ```
 
